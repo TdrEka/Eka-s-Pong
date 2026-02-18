@@ -25,6 +25,8 @@ font = pygame.font.SysFont(None, 60)
 ai_reaction_timer = 0
 ai_reaction_delay = 0.5
 
+game_state = "menu"
+
 while running:
     clock.tick(fps)
     keys = pygame.key.get_pressed()
@@ -36,10 +38,14 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE and game_state == "menu":
+                game_state = "playing"
     
-    ball.move()
-    if ball.dx > 0:  # only track if ball coming right
-        ai_reaction_timer += 1
+    if game_state == "playing":
+        ball.move()
+        if ball.dx > 0:  # only track if ball coming right
+            ai_reaction_timer += 1
 
         if ai_reaction_timer >= ai_reaction_delay:
             if ball.rect.centery < right_paddle.rect.centery:
@@ -83,6 +89,9 @@ while running:
     right_text = font.render(str(right_score), True, (255, 255, 255))
     screen.blit(left_text, (WIDTH//4, 20))
     screen.blit(right_text, (WIDTH*3//4, 20))
+    if game_state == "menu":
+        menu_text = font.render("Press SPACE to Start", True, (255, 255, 255))
+        screen.blit(menu_text, (WIDTH//2 - menu_text.get_width()//2, HEIGHT//2 - menu_text.get_height()//2))
     pygame.display.flip()
 pygame.quit()
 sys.exit()
